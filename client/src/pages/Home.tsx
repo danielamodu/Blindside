@@ -60,6 +60,10 @@ export default function Home() {
     document.getElementById("route-console")?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
+  const launchShieldedApp = () => {
+    window.location.href = "/app/shield";
+  };
+
   const advanceRoute = () => {
     if (phase === 0) setPhase(1);
     if (phase === 1) setPhase(2);
@@ -99,7 +103,7 @@ export default function Home() {
             <span className="status-dot" />
             Route ready
           </button>
-          <Button className="header-cta" onClick={startRoute}>
+          <Button className="header-cta" onClick={launchShieldedApp}>
             Shield USDC <ArrowUpRight size={15} />
           </Button>
           <button className="menu-button" aria-label="Toggle menu" onClick={() => setMenuOpen((open) => !open)}>
@@ -114,7 +118,7 @@ export default function Home() {
           <h1>Trade on Extended.<br /><em>Keep the rest separate.</em></h1>
           <p className="hero-lede">Blindside funds and withdraws an Extended perps account without connecting your trading identity to the rest of your on-chain activity.</p>
           <div className="hero-actions">
-            <Button className="primary-action" onClick={startRoute}>Shield USDC <ArrowRight size={17} /></Button>
+            <Button className="primary-action" onClick={launchShieldedApp}>Launch shielded app <ArrowRight size={17} /></Button>
             <button className="secondary-action" onClick={() => document.getElementById("flow")?.scrollIntoView({ behavior: "smooth" })}>View the flow <ChevronRight size={16} /></button>
           </div>
           <div className="hero-proof" aria-label="Product capabilities">
@@ -278,7 +282,7 @@ export default function Home() {
             <h2 id="footer-cta-title">Your trading route<br /><em>starts separate.</em></h2>
             <p>Shield USDC, fund Extended through a fresh route, then trade normally. No new terminal. No unnecessary overlap.</p>
             <div className="footer-cta-actions">
-              <Button className="footer-primary-action" onClick={startRoute}>Shield USDC <ArrowRight size={17} /></Button>
+              <Button className="footer-primary-action" onClick={launchShieldedApp}>Launch shielded app <ArrowRight size={17} /></Button>
               <button className="footer-route-control glass-shell" onClick={() => document.getElementById("architecture")?.scrollIntoView({ behavior: "smooth" })}><span className="status-dot" /> View route architecture <ArrowUpRight size={15} /></button>
             </div>
           </div>

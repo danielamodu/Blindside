@@ -82,3 +82,9 @@ The mark is an abstract offset aperture: two stacked rounded rectangles with a n
 ## Signature brand color
 
 **Blindside Signal — #D8FF3E.** A sharp acid-lime used only when the route is active, ready, or confirmed.
+
+## Style Decisions
+
+- The route field is visible in every primary application state: a Blindside Signal path, privacy lens, fresh-address marker, or Extended handoff occupies the main composition beside the current task.
+- Glass is reserved for navigation, status, and contextual controls. Amounts, addresses, balances, credentials, and signing actions live on solid graphite instrument surfaces.
+- The privacy lens is Blindside’s primary signature motif. It recurs when the product explains concealment, fresh destination generation, route handoff, and withdrawal separation.
