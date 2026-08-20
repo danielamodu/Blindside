@@ -17,5 +17,5 @@
 ## Repository handoff
 
 - [x] Add agent-facing installation and local-run instructions.
-- [ ] Create a private GitHub repository and push the Blindside source.
-- [ ] Verify the remote repository and provide the handoff link.
+- [x] Create a private GitHub repository and push the Blindside source.
+- [x] Verify the remote repository and provide the handoff link.
