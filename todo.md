@@ -13,3 +13,9 @@
 - [x] Build the trading dashboard with collateral, positions, transfer status, and route-aware actions.
 - [x] Build the withdrawal and re-shield page with destination review, signing state, and STRK20 export tracker.
 - [x] Verify all application routes at desktop and mobile sizes, then save a new checkpoint.
+
+## Repository handoff
+
+- [x] Add agent-facing installation and local-run instructions.
+- [ ] Create a private GitHub repository and push the Blindside source.
+- [ ] Verify the remote repository and provide the handoff link.
