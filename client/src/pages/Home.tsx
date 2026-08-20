@@ -271,10 +271,46 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="footer-cta" aria-labelledby="footer-cta-title">
+        <div className="footer-cta-inner">
+          <div className="footer-cta-copy">
+            <p className="eyebrow"><span className="eyebrow-dot" /> The private way in</p>
+            <h2 id="footer-cta-title">Your trading route<br /><em>starts separate.</em></h2>
+            <p>Shield USDC, fund Extended through a fresh route, then trade normally. No new terminal. No unnecessary overlap.</p>
+            <div className="footer-cta-actions">
+              <Button className="footer-primary-action" onClick={startRoute}>Shield USDC <ArrowRight size={17} /></Button>
+              <button className="footer-route-control glass-shell" onClick={() => document.getElementById("architecture")?.scrollIntoView({ behavior: "smooth" })}><span className="status-dot" /> View route architecture <ArrowUpRight size={15} /></button>
+            </div>
+          </div>
+          <div className="footer-art" aria-hidden="true">
+            <div className="footer-art-orbit orbit-one" />
+            <div className="footer-art-orbit orbit-two" />
+            <div className="footer-art-route"><span /><i /><b /></div>
+            <img src="/manus-storage/blindside-mark_2ece01de.png" alt="" />
+            <span className="footer-art-label">ROUTE READY</span>
+          </div>
+          <div className="footer-cta-meta"><span>PRIVATE ROUTE</span><span>FRESH DESTINATION</span><span>EXTENDED READY</span></div>
+        </div>
+      </section>
+
       <footer className="site-footer">
-        <a className="brand" href="#top"><img src="/manus-storage/blindside-mark_2ece01de.png" alt="" /><span>blindside</span></a>
-        <p>Private funding route for Extended perps.</p>
-        <div><a href="#architecture">Architecture</a><a href="#verify">Verify</a><a href="#top">Back to top</a></div>
+        <div className="footer-main">
+          <div className="footer-about">
+            <a className="brand footer-brand" href="#top"><img src="/manus-storage/blindside-mark_2ece01de.png" alt="" /><span>blindside</span></a>
+            <p>Private funding routes for traders who want their Extended perps activity separated from the rest of their on-chain life.</p>
+            <button className="footer-status" onClick={startRoute}><span className="status-dot" /> Route status: ready <ArrowUpRight size={13} /></button>
+          </div>
+          <nav className="footer-nav" aria-label="Footer navigation">
+            <div className="footer-nav-group"><span>Product</span><a href="#route-console">Shield USDC</a><a href="#flow">How it works</a><button onClick={() => setExtendedOpen(true)}>Open Extended</button></div>
+            <div className="footer-nav-group"><span>Protocol</span><a href="#architecture">Architecture</a><a href="#verify">Verify route</a><a href="#architecture">Privacy model</a></div>
+            <div className="footer-nav-group"><span>Resources</span><a href="#flow">Route guide</a><a href="#architecture">Technical notes</a><a href="#verify">System status</a></div>
+            <div className="footer-nav-group"><span>Company</span><a href="mailto:hello@blindside.dev">Contact</a><a href="#top">Brand</a><a href="#top">Back to top</a></div>
+          </nav>
+        </div>
+        <div className="footer-bottom">
+          <span>© 2026 Blindside. Interface prototype.</span>
+          <div><span>Built for Starknet</span><span>Private by route</span><span>All systems nominal <i className="status-dot" /></span></div>
+        </div>
       </footer>
     </main>
   );

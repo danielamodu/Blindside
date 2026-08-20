@@ -1,0 +1,5 @@
+# Browserbase footer study
+
+Browserbase closes its page with two distinct moves: a large, confidence-building conversion statement immediately before the footer and then a branded, high-contrast footer field containing structured navigation columns. The footer is not visually quiet; it acts as a final branded environment with a large logo mark, generous white space, multiple carefully grouped link families, social/community links, and concise legal items.
+
+For Blindside, the right translation is not Browserbase’s bright orange or its exact layout. The adaptation should be a **graphite closing field** with a concentrated acid-lime route glow, a final large statement—"Your trading route starts separate."—and a decisive Shield USDC action. Beneath that conversion surface, navigation should be grouped as **Product**, **Protocol**, **Resources**, and **Company**, with the aperture mark used at an oversized scale as a quiet visual anchor. The footer must preserve the Liquid Obsidian rule: solid/dark body surface, glass only for the compact closing route control and social/status actions.
