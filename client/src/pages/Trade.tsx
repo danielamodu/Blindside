@@ -77,12 +77,12 @@ export default function Trade() {
           </div>
           <div className="collateral-metrics">
             <div>
-              <span>Pending deposits</span>
-              <strong>{isConnected ? `${fmtUsdc(balance?.pendingDeposit)} USDC` : "—"}</strong>
+              <span>Available to trade</span>
+              <strong>{isConnected ? `${fmtUsdc(balance?.availableForTrade)} USDC` : "—"}</strong>
             </div>
             <div>
-              <span>Pending withdrawals</span>
-              <strong>{isConnected ? `${fmtUsdc(balance?.pendingWithdrawal)} USDC` : "—"}</strong>
+              <span>Available to withdraw</span>
+              <strong>{isConnected ? `${fmtUsdc(balance?.availableForWithdrawal)} USDC` : "—"}</strong>
             </div>
             <div>
               <span>Open positions</span>
@@ -128,13 +128,13 @@ export default function Trade() {
               <span>Leverage</span>
             </div>
             {positions.map((pos, idx) => {
-              const pnl = parseFloat(pos.unrealizedPnl);
+              const pnl = parseFloat(pos.unrealisedPnl);
               return (
                 <div className="positions-row" key={idx}>
                   <strong>{pos.market}</strong>
                   <span className={pos.side === "LONG" ? "side-pill long" : "side-pill short"}>{pos.side}</span>
                   <span>{pos.size}</span>
-                  <span>${parseFloat(pos.entryPrice).toFixed(2)}</span>
+                  <span>${parseFloat(pos.openPrice).toFixed(2)}</span>
                   <span>${parseFloat(pos.markPrice).toFixed(2)}</span>
                   <b className={pnl >= 0 ? "pnl-positive" : "pnl-negative"}>
                     {pnl >= 0 ? "+" : ""}{pnl.toFixed(2)} USDC

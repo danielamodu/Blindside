@@ -111,3 +111,6 @@ temp/
 # Manus version file (auto-generated, not part of source)
 client/public/__manus__/version.json
 .project-config.json
+
+# Cloned reference repos used for verifying integration claims (not part of source)
+tmp_research/

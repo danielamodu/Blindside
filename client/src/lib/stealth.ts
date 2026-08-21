@@ -1,6 +1,15 @@
 import { ec, hash, CallData, stark } from 'starknet';
 
-const OZ_ACCOUNT_CLASS_HASH = '0x061dac032f228abef9c6626f995015233097ae253a7f72d68552db02f2971b8f';
+/**
+ * OZ account class hash, pulled from the STRK20 ecosystem's own account-deployment tooling
+ * (tmp_research/starknet-privacy/e2e/scripts/deploy-accounts.ts:54-56 — "OZ account class hash"),
+ * so a deployed stealth address matches the OZ contract version the rest of the STRK20 tooling
+ * deploys against. That script is the only OZ account class hash declaration found anywhere in
+ * the starknet-privacy repo; it deploys test/e2e accounts, not necessarily against mainnet, so
+ * this is not independently confirmed as declared on Starknet mainnet — verify the class hash is
+ * declared on mainnet (e.g. via Voyager) before relying on it to deploy a real stealth account.
+ */
+const OZ_ACCOUNT_CLASS_HASH = '0x5b4b537eaa2399e3aa99c4e2e0208ebd6c71bc1467938cd52c798c601e43564';
 
 export interface StealthKey {
   privateKey: string;
@@ -9,8 +18,6 @@ export interface StealthKey {
 }
 
 export function generateStealthKey(): StealthKey {
-  const entropy = new Uint8Array(32);
-  crypto.getRandomValues(entropy);
   const privateKey = stark.randomAddress();
   const publicKey = ec.starkCurve.getStarkKey(privateKey);
 

@@ -9,7 +9,7 @@ import { connect, disconnect } from "@starknet-io/get-starknet";
 import { shield, unshield, USDC_ADDRESS, parseUsdcAmount, formatUsdcAmount } from "@/lib/privacy";
 import { generateStealthKey, saveStealthKey, loadStealthKey, shortAddr } from "@/lib/stealth";
 import type { StealthKey } from "@/lib/stealth";
-import { CONFIG, explorerTxUrl } from "@/lib/config";
+import { explorerTxUrl } from "@/lib/config";
 
 export default function Shield() {
   const [wallet, setWallet] = useState<StarknetWindowObject | null>(null);
@@ -80,7 +80,6 @@ export default function Shield() {
       const res = await shield(wallet, {
         token: USDC_ADDRESS,
         amount: onChain,
-        poolAddress: CONFIG.poolAddress,
       });
       setShieldTxHash(res.transactionHash);
     } catch (err) {
@@ -107,7 +106,6 @@ export default function Shield() {
         token: USDC_ADDRESS,
         amount: onChain,
         recipient: stealthKey.address,
-        poolAddress: CONFIG.poolAddress,
       });
       setUnshieldTxHash(res.transactionHash);
     } catch (err) {

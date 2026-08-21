@@ -1,5 +1,12 @@
 /**
- * Blindside Withdraw Page — Integrated with SNIP12 Signed Extended Withdrawals, Optional Re-shield & Hackathon strk20.json Tracker
+ * Blindside Withdraw Page — Extended Withdrawal Request, Optional Re-shield & Hackathon strk20.json Tracker
+ *
+ * Withdrawal signing is not yet implemented: Extended's /user/withdrawal endpoint requires a
+ * StarkEx settlement signature (fast_stark_crypto.get_withdrawal_msg_hash — see
+ * tmp_research/python_sdk/x10/signing/withdrawal_object.py), not SNIP-12 typed data. Producing
+ * that hash needs the account's position/vault id, the collateral asset's StarkEx id, and the
+ * exchange's Starknet domain separator, none of which are available client-side yet — see the
+ * project report for what's needed before this can go further.
  */
 import { AppShell } from "@/components/AppShell";
 import { ArrowRight, Check, CircleAlert, Copy, Download, KeyRound, Shield, ShieldCheck, WalletCards } from "lucide-react";
@@ -8,7 +15,7 @@ import { getExtendedClient, fmtUsdc } from "@/lib/extended";
 import { shield, USDC_ADDRESS, parseUsdcAmount } from "@/lib/privacy";
 import { getTxLog, countMainnetPoolTxs, exportStrk20Json, logTx } from "@/lib/txlog";
 import type { TxEntry } from "@/lib/txlog";
-import { CONFIG, NETWORK, explorerTxUrl } from "@/lib/config";
+import { NETWORK, explorerTxUrl } from "@/lib/config";
 import { shortAddr } from "@/lib/stealth";
 
 export default function Withdraw() {
@@ -52,19 +59,9 @@ export default function Withdraw() {
     setIsSubmitting(true);
     setWithdrawError(null);
     try {
-      const onChainAmount = parseUsdcAmount(amount);
-      const { ec, hash, shortString } = await import("starknet");
-
-      const msgHash = hash.computeHashOnElements([
-        shortString.encodeShortString("ExtendedWithdrawal"),
-        onChainAmount,
-        destination,
-      ]);
-
-      const sig = ec.starkCurve.sign(msgHash, starkPrivKey);
-      const signature = `${sig.r.toString(16)},${sig.s.toString(16)}`;
-
-      const result = await client.withdraw(onChainAmount, destination, signature);
+      // Withdrawal signing isn't implemented yet — see the file header comment and the
+      // project report for why (Extended needs a StarkEx settlement signature, not SNIP-12).
+      const result = await client.withdraw();
       setWithdrawalId(result.withdrawalId);
 
       logTx({
@@ -93,7 +90,6 @@ export default function Withdraw() {
       const res = await shield(wallet, {
         token: USDC_ADDRESS,
         amount: onChainAmount,
-        poolAddress: CONFIG.poolAddress,
       });
       setReshieldTxHash(res.transactionHash);
       refreshTracker();
@@ -143,7 +139,7 @@ export default function Withdraw() {
             <div className="panel-icon"><WalletCards size={19} /></div>
             <div>
               <h2>Request margin withdrawal.</h2>
-              <p>Uses your Extended Stark key client-side to generate a SNIP12 signature.</p>
+              <p>Not yet functional — Extended withdrawal signing requires a StarkEx settlement signature this app doesn't produce yet.</p>
             </div>
           </div>
           <div className="form-two-column">
@@ -182,7 +178,7 @@ export default function Withdraw() {
               <input
                 type="password"
                 value={starkPrivKey}
-                placeholder="Required for SNIP12 signature"
+                placeholder="Signing not yet implemented"
                 onChange={(e) => setStarkPrivKey(e.target.value)}
               />
               <KeyRound size={16} />

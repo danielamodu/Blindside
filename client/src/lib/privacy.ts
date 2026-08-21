@@ -1,140 +1,124 @@
 import type { StarknetWindowObject } from '@starknet-io/get-starknet';
-import { CONFIG, NETWORK } from './config';
+import { NETWORK } from './config';
 import { logTx } from './txlog';
 
-const WALLET_METHODS = {
-  shield: 'starknet_shield',
-  unshield: 'starknet_unshield',
-  privateTransfer: 'starknet_privateTransfer',
-  privateBalance: 'starknet_getPrivateBalance',
-} as const;
+/**
+ * Wire shape of a STRK20 privacy action (the deposit/withdraw/transfer variants of the
+ * wallet-api `STRK20_ACTION` union this app sends). Verified against
+ * tmp_research/starknet-privacy/client/src/builder.ts:137-159 (PrivacyTokenBuilderImpl.deposit/
+ * withdraw/transfer) and client/src/interfaces.ts:29-33,77-78 — no `poolAddress` field on the
+ * action itself, since the pool is resolved by the wallet, not supplied by the dapp.
+ *
+ * Not imported from `starknet` because `STRK20_ACTION` only ships in starknet.js
+ * ^10.0.0-beta.6 (tmp_research/starknet-privacy/client/package.json:51), while this app
+ * pins starknet ^6.24.1 (package.json). Local shim, same approach interfaces.ts itself uses
+ * for wallet-api types not yet released upstream.
+ */
+type Strk20Action =
+  | { type: 'deposit'; token: string; amount: string }
+  | { type: 'withdraw'; token: string; amount: string; recipient: string }
+  | { type: 'transfer'; token: string; amount: string; recipient: string };
+
+/**
+ * The privacy subset of a get-starknet v6 wallet a privacy-enabled wallet (e.g. Ready or Braavos
+ * with STRK20 support) exposes directly on the wallet object — not through a generic
+ * `wallet.request({type})` call. Verified against
+ * tmp_research/starknet-privacy/client/src/interfaces.ts:111-125 (`PrivacyWallet`) and
+ * client/src/client.ts:51-53, which shows `strk20InvokeTransaction(actions)` as the direct
+ * prove+broadcast fast path used when there are no surrounding calls — exactly Blindside's case.
+ */
+interface Strk20Wallet {
+  strk20InvokeTransaction(actions: Strk20Action[]): Promise<{ transaction_hash: string }>;
+}
+
+function asStrk20Wallet(wallet: StarknetWindowObject): Strk20Wallet {
+  const candidate = wallet as unknown as Partial<Strk20Wallet>;
+  if (typeof candidate.strk20InvokeTransaction !== 'function') {
+    throw new Error(
+      'Connected wallet does not expose STRK20 privacy methods (strk20InvokeTransaction). ' +
+        'Connect a privacy-enabled Starknet wallet (e.g. Ready or Braavos with STRK20 support).'
+    );
+  }
+  return candidate as Strk20Wallet;
+}
 
 export interface ShieldParams {
   token: string;
   amount: string;
-  poolAddress?: string;
 }
 
 export interface UnshieldParams {
   token: string;
   amount: string;
   recipient: string;
-  poolAddress?: string;
 }
 
 export interface PrivateTransferParams {
   token: string;
   amount: string;
   recipient: string;
-  poolAddress?: string;
 }
 
 export interface PrivacyTxResult {
   transactionHash: string;
 }
 
-export interface PrivateBalanceResult {
-  balance: string;
-  token: string;
-}
-
 export async function shield(
   wallet: StarknetWindowObject,
   params: ShieldParams
 ): Promise<PrivacyTxResult> {
-  const poolAddress = params.poolAddress ?? CONFIG.poolAddress;
-  if (!poolAddress) {
-    throw new Error('Pool address not configured.');
-  }
-
-  const result = (await (wallet as any).request({
-    type: WALLET_METHODS.shield,
-    params: {
-      token: params.token,
-      amount: params.amount,
-      poolAddress,
-    },
-  })) as PrivacyTxResult;
+  const strk20 = asStrk20Wallet(wallet);
+  const { transaction_hash } = await strk20.strk20InvokeTransaction([
+    { type: 'deposit', token: params.token, amount: params.amount },
+  ]);
 
   logTx({
-    hash: result.transactionHash,
+    hash: transaction_hash,
     action: 'shield',
     network: NETWORK,
     amount: formatUsdcAmount(params.amount),
   });
 
-  return result;
+  return { transactionHash: transaction_hash };
 }
 
 export async function unshield(
   wallet: StarknetWindowObject,
   params: UnshieldParams
 ): Promise<PrivacyTxResult> {
-  const poolAddress = params.poolAddress ?? CONFIG.poolAddress;
-  if (!poolAddress) {
-    throw new Error('Pool address not configured.');
-  }
-
-  const result = (await (wallet as any).request({
-    type: WALLET_METHODS.unshield,
-    params: {
-      token: params.token,
-      amount: params.amount,
-      recipient: params.recipient,
-      poolAddress,
-    },
-  })) as PrivacyTxResult;
+  const strk20 = asStrk20Wallet(wallet);
+  const { transaction_hash } = await strk20.strk20InvokeTransaction([
+    { type: 'withdraw', token: params.token, amount: params.amount, recipient: params.recipient },
+  ]);
 
   logTx({
-    hash: result.transactionHash,
+    hash: transaction_hash,
     action: 'unshield',
     network: NETWORK,
     amount: formatUsdcAmount(params.amount),
     note: `→ ${params.recipient.slice(0, 10)}...`,
   });
 
-  return result;
+  return { transactionHash: transaction_hash };
 }
 
 export async function privateTransfer(
   wallet: StarknetWindowObject,
   params: PrivateTransferParams
 ): Promise<PrivacyTxResult> {
-  const poolAddress = params.poolAddress ?? CONFIG.poolAddress;
-  if (!poolAddress) {
-    throw new Error('Pool address not configured.');
-  }
-
-  const result = (await (wallet as any).request({
-    type: WALLET_METHODS.privateTransfer,
-    params: {
-      token: params.token,
-      amount: params.amount,
-      recipient: params.recipient,
-      poolAddress,
-    },
-  })) as PrivacyTxResult;
+  const strk20 = asStrk20Wallet(wallet);
+  const { transaction_hash } = await strk20.strk20InvokeTransaction([
+    { type: 'transfer', token: params.token, amount: params.amount, recipient: params.recipient },
+  ]);
 
   logTx({
-    hash: result.transactionHash,
+    hash: transaction_hash,
     action: 'private_transfer',
     network: NETWORK,
     amount: formatUsdcAmount(params.amount),
   });
 
-  return result;
-}
-
-export async function getPrivateBalance(
-  wallet: StarknetWindowObject,
-  token: string,
-  poolAddress?: string
-): Promise<PrivateBalanceResult> {
-  const pool = poolAddress ?? CONFIG.poolAddress;
-  return (await (wallet as any).request({
-    type: WALLET_METHODS.privateBalance,
-    params: { token, poolAddress: pool },
-  })) as PrivateBalanceResult;
+  return { transactionHash: transaction_hash };
 }
 
 export const USDC_ADDRESS_MAINNET = '0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8';
